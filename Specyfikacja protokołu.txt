@@ -1,0 +1,27 @@
+Protokó³ transmisji jest bardzo prosty, a jego opis zamieszczam poni¿ej.
+
+Parametry po³¹czenia to prêdkoœæ 57600, 8 bitów danych, bez parzystoœci, 1 bit stopu - czyli, poza prêdkoœci¹, ogólnie domyœlne ustawienia.
+
+Generalnie to do urz¹dzenia mo¿na wys³aæ 4 typy ramek
+
+0x55 0x01 'S' XX CRC8 - Set - ustawia wartoœci przekaŸników na odpowiadaj¹c¹ liczbê XX w formacie binarnym (najbardziej znacz¹cy bit to przekaŸnik 8, najmniej 1)
+0x55 0x01 'O' XX CRC8 - On - w³¹cza przekaŸnik o numerze 0 - 7 (XX to numer przekaŸnika 0x00 - pierwszy przekaŸnik 0x07 - ósmy)
+0x55 0x01 'F' XX CRC8 - Off - jak wy¿ej tylko ¿e wy³¹cza
+0x55 0x01 'G' XX CRC8 - Get - pobierz wyjœcia przekaŸników
+na pakiet Get urz¹dzenie odpowiada w sposób
+
+0x55 0x01 'R' XX CRC8 - XX to wartoœæ wyjœæ w formacie binarnym.
+
+Znaki w ' ' oznaczaj¹ litery w kodzie ASCII (wielkoœæ liter jest istotna). Wszystkie sumy kontrolne CRC8 (je¿eli potrzeba to wyœlê funkcjê do obliczania) s¹ liczone dla pocz¹tkowego ziarna (seed'a) o wartoœci 0x00, oraz nie jest do wliczana do nich wartoœæ 0x55 - s³u¿y ona tylko do synchronizacji (pocz¹tek pakietu). Wartoœæ 0x01 oznacza "adres" urz¹dzenia i w pañskim przypadku (urz¹dzenie na USB/RS232) jest zawsze taka sama.
+
+Np. ¿eby w³¹czyæ pierwszy przekaŸnik wysy³amy
+0x55 0x01 0x4f 0x00 0x28
+
+W za³¹czniku funkcje do obliczania CRC w Ansi C (mogê przes³aæ funkcje w C#). S¹ 2 wersje funkcji szybka u¿ywaj¹ca tablicy odniesieñ (tzw. preprocessing'u) i wolna która dla ka¿dego bajtu wykonuje 8 razy te same instrukcje dla ka¿dego bajtu. Funkcja jest zapo¿yczona i przerobiona ze strony http://www.maxim-ic.com/appnotes.cfm/an_pk/27 w sekcji Example 3 (tam jest chyba kod do Delphi). Tam jest te¿ jej szczegó³owy opis.
+ 
+Ten opis w sumie wystarczy ¿eby wykorzystaæ wszystkie funkcje sterownika.
+
+Oprogramowanie do obs³ugi/przetestowania znajduje siê pod na stronie www.ucprojects.eu w dziale download.
+
+W razie jakichkolwiek pytañ proszê nie wahaæ siê pytaæ.
+Pozdrawiam Jakub
