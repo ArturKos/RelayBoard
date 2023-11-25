@@ -6,6 +6,18 @@
 #define SETUP_DEVICE_COMMAND_BUF_LEN 100
 
 #define MESSAGE_TO_BOARD_LENGTH 5
+#define MAX_RELAY 9 //including device name at first line
+#define MAX_RELAY_NAME_LENGTH 50
+
+#define DEVICE_IDX 0
+#define RELAY1_IDX 1
+#define RELAY2_IDX 2
+#define RELAY3_IDX 3
+#define RELAY4_IDX 4
+#define RELAY5_IDX 5
+#define RELAY6_IDX 6
+#define RELAY7_IDX 7
+#define RELAY8_IDX 8
 
 #define MIN_RELAY_IDX 0
 #define MAX_RELAY_IDX 7

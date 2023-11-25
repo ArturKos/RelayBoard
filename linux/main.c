@@ -7,28 +7,28 @@
 #include "main.h"
 
 unsigned char message_to_board[MESSAGE_TO_BOARD_LENGTH] = {0x55,0x01,'S',0xff,0x28};
-unsigned char power_strip_device[POWER_STRIP_DEVICE_CONTROL_NAME_LENGTH] = {0};
+char config[MAX_RELAY][MAX_RELAY_NAME_LENGTH] = {{0}};
 
 bool read_config_file(){
 
    FILE *config_file = fopen(POWER_STRIP_CONFIG_FILE_NAME, "r+");
-   
    if (NULL == config_file){
 		return false;
 	}
-	int read_count = fread( power_strip_device, sizeof(char), POWER_STRIP_DEVICE_CONTROL_NAME_LENGTH, config_file);
-    if (0 == read_count){
-		fclose(config_file);
-		return false;
+	int idx = 0;
+	while(fgets( config[idx], MAX_RELAY_NAME_LENGTH, config_file) && idx < MAX_RELAY_IDX + 1) {
+		if(strlen(config[idx]) > 0) {
+			config[idx][strlen(config[idx])-1] = 0;
+		}
+		idx++;
 	}
-	power_strip_device[read_count-1] = 0;
 	fclose(config_file); 
 	return true;
 }
 
 void board_setup(){
 	char setup_device_command[SETUP_DEVICE_COMMAND_BUF_LEN] = {0};
-	sprintf(setup_device_command,"stty -F %s 57600 cs8 -cstopb -parity -icanon min 100 time 1", power_strip_device);
+	sprintf(setup_device_command,"stty -F %s 57600 cs8 -cstopb -parity -icanon min 100 time 1", (char *)config[DEVICE_IDX]);
 	system(setup_device_command);
 }
 
@@ -40,7 +40,7 @@ bool board_get_relays_status(){
 	message_to_board[RELAYS_MESSAGE_OPTION_INDEX] = RELAY_GET_STATUS;
     message_to_board[RELAYS_MESSAGE_CRC_INDEX] = CountCRC(message_to_board);
 
-    FILE *board = fopen((char *)power_strip_device, "r+");
+    FILE *board = fopen((char *)config[DEVICE_IDX], "r+");
 	if (NULL == board){
 		return false;
 	}
@@ -53,18 +53,18 @@ bool board_get_relays_status(){
 		return false;
 	}
 
-	for(int relay_idx = 0; relay_idx<8; relay_idx++){
+	for(int relay_idx = 0; relay_idx<=MAX_RELAY_IDX; relay_idx++){
 		if(reply_message_from_board[RELAYS_MESSAGE_RELAY_INDEX] & (1<<relay_idx))
-			printf("Relay %d is on\n", relay_idx+1);
+			printf("Relay %d is on  - %s\n", relay_idx+1, config[relay_idx+1]);
 		else
-			printf("Relay %d is off\n", relay_idx+1);
+			printf("Relay %d is off - %s\n", relay_idx+1, config[relay_idx+1]);
 	}
 	fclose(board);
  	return true;
 }
 bool board_write_message_to_board(){
 
-    FILE *board = fopen((char *)power_strip_device, "r+");
+    FILE *board = fopen((char *)config[DEVICE_IDX], "r+");
 	if (NULL == board){
 		return false;
 	}
@@ -169,14 +169,14 @@ int main(int argc, char *argv[]){
 	}
 
 	if(argc == 3){
-		char switch_idx = atoi(argv[1]);
+		int switch_idx = atoi(argv[1]);
 		if( 0 == switch_idx || ((switch_idx - 1) < MIN_RELAY_IDX ) || ((switch_idx -1)> MAX_RELAY_IDX) ){
 			print_usage_message();
     		return -1;		
 		}
 		if(0 == strcmp(argv[2], "on")){
 			if (board_switch_on(switch_idx - 1) ){
-				printf("Switched relay on\n");
+				printf("Switched relay on - %s\n", config[switch_idx]);
 				return 0;
 			}else
 			{
@@ -186,7 +186,7 @@ int main(int argc, char *argv[]){
 		}
 		if(0 == strcmp(argv[2], "off")){
 			if (board_switch_off(switch_idx - 1) ){
-				printf("Switched relay off\n");
+				printf("Switched relay off - %s\n", config[switch_idx]);
 				return 0;
 			}else
 			{
