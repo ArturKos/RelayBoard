@@ -1,4 +1,24 @@
-For Linux compilation:
+# Compiling the Project on Windows
+
+## Requirements
+
+- C++ Builder 6.0
+
+## Compilation Steps
+
+1. Open C++ Builder 6.0.
+2. Select `File` -> `Open...` and open the `.bpr` project file located in the project directory.
+3. Ensure all source files are added to the project.
+4. Configure the build settings as needed.
+5. Click `Project` -> `Build All` to compile the entire project.
+6. After the compilation is complete, run the application directly from the IDE or find the executable file in the project's output directory.
+
+## Troubleshooting
+
+- Ensure all paths to header files and libraries are correctly configured.
+- Check the compilation and linking error messages to identify and fix issues.
+
+# Compiling the Project on Linux
 
 # Power Strip Project
 
