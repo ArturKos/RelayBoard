@@ -38,17 +38,21 @@ bool board_get_relays_status(){
 
 	message_to_board[RELAYS_MESSAGE_RELAY_INDEX] = RELAYS_MESSAGE_ALL_ON;
 	message_to_board[RELAYS_MESSAGE_OPTION_INDEX] = RELAY_GET_STATUS;
-    message_to_board[RELAYS_MESSAGE_CRC_INDEX] = CountCRC(message_to_board);
+	message_to_board[RELAYS_MESSAGE_CRC_INDEX] = CountCRC(message_to_board);
 
-    FILE *board = fopen((char *)config[DEVICE_IDX], "r+");
+	FILE *board = fopen((char *)config[DEVICE_IDX], "r+");
 	if (NULL == board){
 		return false;
 	}
-    if (MESSAGE_TO_BOARD_LENGTH != fwrite( message_to_board, sizeof(char), MESSAGE_TO_BOARD_LENGTH, board)){
+	if (MESSAGE_TO_BOARD_LENGTH != fwrite( message_to_board, sizeof(char), MESSAGE_TO_BOARD_LENGTH, board)){
 		fclose(board);
 		return false;
 	}
-    if (MESSAGE_TO_BOARD_LENGTH != fread( reply_message_from_board, sizeof(char), MESSAGE_TO_BOARD_LENGTH, board)){
+
+	// Add a delay between writing and reading
+	usleep(100000); // 100 milliseconds
+
+	if (MESSAGE_TO_BOARD_LENGTH != fread( reply_message_from_board, sizeof(char), MESSAGE_TO_BOARD_LENGTH, board)){
 		fclose(board);
 		return false;
 	}
@@ -60,7 +64,7 @@ bool board_get_relays_status(){
 			printf("Relay %d is off - %s\n", relay_idx+1, config[relay_idx+1]);
 	}
 	fclose(board);
- 	return true;
+	return true;
 }
 bool board_write_message_to_board(){
 
@@ -118,8 +122,8 @@ void print_usage_message(){
 		printf("1. power_strip status\n");
 		printf("2. power_strip allon\n");
 		printf("3. power_strip alloff\n");
-		printf("4. power_strip X on  (X - relay number from 1 to 8\n");
-		printf("5. power_strip X off (X - relay number from 1 to 8\n");
+		printf("4. power_strip X on  (X - relay number from 1 to 8)\n");
+		printf("5. power_strip X off (X - relay number from 1 to 8)\n");
 }
 
 int main(int argc, char *argv[]){
