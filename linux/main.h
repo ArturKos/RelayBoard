@@ -1,39 +1,41 @@
+/**
+ * @file main.h
+ * @brief Protocol constants, frame layout and configuration paths
+ *        shared between the CLI driver and helpers.
+ */
+
 #ifndef MAIN_BOARD_H
 #define MAIN_BOARD_H
 
 #define POWER_STRIP_CONFIG_FILE_NAME "power_strip.conf"
-#define POWER_STRIP_DEVICE_CONTROL_NAME_LENGTH 50
-#define SETUP_DEVICE_COMMAND_BUF_LEN 100
+#define POWER_STRIP_STATE_FILE_NAME  "power_strip.state"
 
-#define MESSAGE_TO_BOARD_LENGTH 5
-#define MAX_RELAY 9 //including device name at first line
+#define MESSAGE_LENGTH 5
+#define MAX_RELAY 9 /* device path at line 0, 8 relay names at lines 1..8 */
 #define MAX_RELAY_NAME_LENGTH 50
 
 #define DEVICE_IDX 0
-#define RELAY1_IDX 1
-#define RELAY2_IDX 2
-#define RELAY3_IDX 3
-#define RELAY4_IDX 4
-#define RELAY5_IDX 5
-#define RELAY6_IDX 6
-#define RELAY7_IDX 7
-#define RELAY8_IDX 8
-
 #define MIN_RELAY_IDX 0
 #define MAX_RELAY_IDX 7
 
-#define RELAY_ON 'O'
-#define RELAY_OFF 'F'
+#define FRAME_SYNC_BYTE    0x55
+#define FRAME_DEVICE_ADDR  0x01
 
-#define RELAY_GET_STATUS 'G'
+#define CMD_SET_STATUS 'S'
+#define CMD_RELAY_ON   'O'
+#define CMD_RELAY_OFF  'F'
+#define CMD_GET_STATUS 'G'
+#define CMD_REPLY      'R'
 
-#define RELAY_SET_STATUS 'S'
+#define MSG_SYNC_INDEX 0
+#define MSG_ADDR_INDEX 1
+#define MSG_CMD_INDEX  2
+#define MSG_DATA_INDEX 3
+#define MSG_CRC_INDEX  4
 
-#define RELAYS_MESSAGE_OPTION_INDEX 2
-#define RELAYS_MESSAGE_RELAY_INDEX  3
-#define RELAYS_MESSAGE_CRC_INDEX    4
+#define RELAYS_ALL_ON  0xff
+#define RELAYS_ALL_OFF 0x00
 
-#define RELAYS_MESSAGE_ALL_ON 0xff
-#define RELAYS_MESSAGE_ALL_OFF 0x0
+#define SERIAL_READ_TIMEOUT_DECISECONDS 5 /* termios VTIME: 0.5 s */
 
-#endif  // MAIN_BOARD_H
+#endif  /* MAIN_BOARD_H */
