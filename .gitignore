@@ -1,0 +1,20 @@
+# CMake / Linux build
+build/
+*.o
+*.a
+*.so
+*.out
+
+# Borland C++ Builder (Windows GUI)
+*.obj
+*.exe
+*.tds
+*.#*
+*.rsm
+*.map
+__history/
+__recovery/
+
+# OS / editor
+.DS_Store
+Thumbs.db
